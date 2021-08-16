@@ -38,10 +38,13 @@ app.get('/', function(요청, 응답) {
     })
 })
 
-//:id 비교 후 삭제
+//:id 비교 후 삭제 왜 안되노
 app.get('/delete/:id', function(요청, 응답) {
-        connection.query('delete from board where num=?', [요청.params.num], function() {
+        connection.query('delete from board where num=?;', [요청.params.num], function() {
+            //응답.redirect('/'), 
             응답.send('삭제됨')
+
+
         })
     })
     //insert 페이지로 바로 이동
