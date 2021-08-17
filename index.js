@@ -1,8 +1,11 @@
 const express = require('express')
 
+
 const mysql = require('mysql2')
 const dbconfig = require('./config/dbconfig')
-const connection = mysql.createConnection(dbconfig)
+const dbs = mysql.createConnection(dbconfig)
+
+const http = require('http')
 
 const bodyParser = require('body-parser') //bodyPaser =>request.body에 데이터 접근하기 위해 사용
 
@@ -26,7 +29,7 @@ app.listen(3333, function() {
     //fs 모듈을 사용하지않고 단순히 res.send(결과)를 했을때는 json 형식의 데이터 출력
 app.get('/', function(요청, 응답) {
     fs.readFile('list.ejs', 'utf8', function(에러, 데이터) {
-        connection.query('select * from board order by num desc', function(에러, 결과) {
+        dbs.query('select * from board order by num desc', function(에러, 결과) {
             if (에러) {
                 응답.send(에러)
             } else {
@@ -39,10 +42,10 @@ app.get('/', function(요청, 응답) {
 })
 
 //:id 비교 후 삭제 왜 안되노
-app.get('/delete/:id', function(요청, 응답) {
-        connection.query('delete from board where num=?;', [요청.params.num], function() {
+app.get('/delete/:num', function(요청, 응답) {
+        dbs.query('delete from board where num=?;', [요청.params.num], function() {
             //응답.redirect('/'), 
-            응답.send('삭제됨')
+            응답.send(http)
 
 
         })
@@ -57,7 +60,7 @@ app.get('/insert', function(요청, 응답) {
 app.post('/insert', function(요청, 응답) {
     const body = 요청.body
 
-    connection.query('insert into board (name, email, subject, passwd, content, wdate) values (?, ?, ?, ?, ?,now());', [
+    dbs.query('insert into board (name, email, subject, passwd, content, wdate) values (?, ?, ?, ?, ?,now());', [
         body.name,
         body.email,
         body.subject,
